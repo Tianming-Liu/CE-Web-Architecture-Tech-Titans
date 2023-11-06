@@ -1,0 +1,67 @@
+-- CREATE TABLE crime_data (
+--     LSOA_Code VARCHAR(255),
+--     LSOA_Name VARCHAR(255),
+--     Crime_Category VARCHAR(255),
+--     `2021_10` INT,
+--     `2021_11` INT,
+--     `2021_12` INT,
+--     `2022_01` INT,
+--     `2022_02` INT,
+--     `2022_03` INT,
+--     `2022_04` INT,
+--     `2022_05` INT,
+--     `2022_06` INT,
+--     `2022_07` INT,
+--     `2022_08` INT,
+--     `2022_09` INT,
+--     `2022_10` INT,
+--     `2022_11` INT,
+--     `2022_12` INT,
+--     `2023_01` INT,
+--     `2023_02` INT,
+--     `2023_03` INT,
+--     `2023_04` INT,
+--     `2023_05` INT,
+--     `2023_06` INT,
+--     `2023_07` INT,
+--     `2023_08` INT,
+--     `2023_09` INT
+-- );
+
+-- LOAD DATA LOCAL INFILE '/Users/tianming_liu/00Self/CE/0017 Web Architecture/Final/CE-Web-Architecture-Tech-Titans/data/crime data/MPS LSOA Level Crime Last 24 Months.csv'
+-- INTO TABLE crime_data
+-- FIELDS TERMINATED BY ',' 
+-- LINES TERMINATED BY '\n'
+-- IGNORE 1 LINES
+-- (LSOA_Code, 
+-- LSOA_Name, 
+-- @skip1, 
+-- Crime_Category, 
+-- @skip2, 
+-- `2021_10`,
+-- `2021_11`,
+-- `2021_12`,
+-- `2022_01`,
+-- `2022_02`,
+-- `2022_03`,
+-- `2022_04`,
+-- `2022_05`,
+-- `2022_06`,
+-- `2022_07`,
+-- `2022_08`,
+-- `2022_09`,
+-- `2022_10`,
+-- `2022_11`,
+-- `2022_12`,
+-- `2023_01`,
+-- `2023_02`,
+-- `2023_03`,
+-- `2023_04`,
+-- `2023_05`,
+-- `2023_06`,
+-- `2023_07`,
+-- `2023_08`,
+-- `2023_09`
+-- );
+
+SELECT * FROM crime_data;
