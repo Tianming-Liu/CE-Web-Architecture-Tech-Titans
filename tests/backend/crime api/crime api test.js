@@ -1,18 +1,14 @@
 #!/usr/bin/env node
 
-//  FlickrData API Server
-//  Author:  Steven Gray
-//  Description:  This FlickrAPI server allows users to connect to the Flickr Database and return values to explore on a mpa
-//                for Workshop 8 - 9 of the course.
-//  Notes:        This API assumes you have an SQL function called DISTANCE defined which can be created by running the following query in MySQL:
-
-//  CREATE FUNCTION distance(a POINT, b POINT) RETURNS double DETERMINISTIC RETURN ifnull(acos(sin(X(a)) * sin(X(b)) + cos(X(a)) * cos(X(b)) * cos(Y(b) - Y(a))) * 6380, 0)
-
-var moment = require('moment');
+//  Crime Data API Server
+//  Author:  Tianming Liu
+//  Description:  This Crime Data API provides the crime data in the unit of LSOA.
 
 var portNumber = 3306;
 
 var mysql = require('mysql');
+
+// Import Private config for database
 
 const config = require('/Users/tianming_liu/00Self/CE/0017 Web Architecture/Final/CE-Web-Architecture-Tech-Titans/config/crime database config.json')
 
@@ -24,25 +20,12 @@ var connection = mysql.createConnection({
   database : config.database
 });
 
+// Initialize Connect to MySQL
+
 connection.connect();
 
-//  Setup the Express Server
-var express = require('express');
-var app = express();
-app.set('view engine', 'ejs');
 
-// Provides the static folders we have added in the project to the web server.
-app.use(express.static(__dirname + '/js'));
-app.use(express.static(__dirname + '/css'));
-app.use(express.static(__dirname + '/images'));
-
-// Default API Endpoint - return the index.ejs file in the views folder
-app.get('/', function(req, res) {
-    return res.render('index');
-})
-
-
-//  API EndPoint to get data from specific area - /data/51.1/0.0/30 
+//  API EndPoint to get crime data around specific location - /data/51.1/0.0/30 
 app.get('/data/:lat/:lon/:radius', function (req, res) {
 
       // Alows data to be downloaded from the server with security concerns
