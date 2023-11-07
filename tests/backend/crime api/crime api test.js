@@ -4,13 +4,13 @@
 //  Author:  Tianming Liu
 //  Description:  This Crime Data API provides the crime data in the unit of LSOA.
 
-var portNumber = 3306;
+var portNumber = 8875;
 
 var mysql = require('mysql');
 
 // Import Private config for database
 
-const config = require('/Users/tianming_liu/00Self/CE/0017 Web Architecture/Final/CE-Web-Architecture-Tech-Titans/config/crime database config.json')
+const config = require('config.js')
 
 // MySQL Connection Variables
 var connection = mysql.createConnection({
