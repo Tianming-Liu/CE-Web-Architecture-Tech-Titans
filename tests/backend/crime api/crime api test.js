@@ -10,7 +10,7 @@ var mysql = require('mysql');
 
 // Import Private config for database
 
-const config = require('config.js')
+const config = require('config.json')
 
 // MySQL Connection Variables
 var connection = mysql.createConnection({
