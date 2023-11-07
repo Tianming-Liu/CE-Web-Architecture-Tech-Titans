@@ -1,2 +1,3 @@
 .DS_Store
 ./config/*
+tests/backend/crime api/config.json

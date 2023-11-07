@@ -8,9 +8,13 @@ var portNumber = 8875;
 
 var mysql = require('mysql');
 
+//  Setup the Express Server
+var express = require('express');
+var app = express();
+
 // Import Private config for database
 
-const config = require('config.json')
+const config = require('config.js')
 
 // MySQL Connection Variables
 var connection = mysql.createConnection({
@@ -41,7 +45,7 @@ app.get('/data/:lat/:lon/:radius', function (req, res) {
 
 
                 // SQL Statement to run
-                var sql = "SELECT * FROM photo_locations WHERE DISTANCE(points, POINT("+lon+","+lat+") ) <= " + radius;
+                var sql = "SELECT LSOA_Code FROM lsoa WHERE ST_Distance_Sphere(ST_Centroid(geo), POINT("+lon+","+lat+")) <= "+radius;
                 
                 // Log it on the screen for debugging
                 console.log(sql);
@@ -62,28 +66,6 @@ app.get('/data/:lat/:lon/:radius', function (req, res) {
         }
 });
 
-// API Endpoint to get data for specific photograph from database - /data/photoDescription/1234567
-app.get('/data/photoDescription/:pid', function (req, res) {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "X-Requested-WithD");
-      if(req.params.pid != ""){
-                var pid = parseInt(req.params.pid);
-            
-                var sql = "SELECT * FROM metadata as a INNER JOIN photos as b ON a.pid = b.pid where a.pid = " + pid; 
-
-                console.log(sql);
-                connection.query(sql, function(err, rows, fields) {
-                        if (err) console.log("Err:" + err);
-                        if(rows != undefined){
-                                res.send(rows);
-                        }else{
-                                res.send("");
-                        }
-                });
-        }else{
-                res.send("");
-        }
-});
 
 // Setup the server and print a string to the screen when server is ready
 var server = app.listen(portNumber, function () {
@@ -91,28 +73,3 @@ var server = app.listen(portNumber, function () {
   var port = server.address().port;
   console.log('App listening at http://%s:%s', host, port);
 });
-
-function mysql_real_escape_string (str) {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-            case "%":
-                return "\\"+char; // prepends a backslash to backslash, percent,
-                                  // and double/single quotes
-        }
-    });
-}
