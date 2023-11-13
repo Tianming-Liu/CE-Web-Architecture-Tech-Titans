@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>London Map Visualization</title>
+
+    <!-- Mapbox Library -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    
+    <!-- DeckGL Library -->
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="map"></div>
+    </div>
+
+    <script type="text/JavaScript">
+
+        const hotels = './src/london_hotel.geojson';
+
+        const lsoa = './src/london_lsoa.geojson';
+
+        // const border = './src/london_border.geojson';
+
+        // function getColorForPopulationDensity(popDensity, minDensity = 0, maxDensity = 5000) {
+        //     // 将人口密度映射到0-1的范围
+        //     const scale = (popDensity - minDensity) / (maxDensity - minDensity);
+
+        //     // 映射到颜色值，这里假设颜色从浅蓝（低密度）到深蓝（高密度）
+        //     const r = Math.floor(255 * (1 - scale));
+        //     const g = Math.floor(255 * (1 - scale));
+        //     const b = 255;
+
+        //     return [r, g, b, 200]; // 返回颜色值，200为透明度
+        // }
+        
+        const deckgl = new deck.DeckGL({
+            container: 'map', // the id of the div element
+            initialViewState: {
+                latitude: 51.51646544379633,
+                longitude: -0.10846510533549451,
+                zoom: 11,
+                minZoom: 9,
+                maxZoom: 13,
+                bearing: 0,
+                pitch: 0
+            },
+
+            // onViewStateChange: ({ viewState }) => {
+            // const boundedViewState = {
+            // ...viewState,
+            // longitude: Math.max(-123, Math.min(-122, viewState.longitude)),
+            // latitude: Math.max(37, Math.min(38, viewState.latitude))
+            // };
+            // return boundedViewState;
+            // },
+            parameters: {
+            //Canvas background color, it can be applied to DIV CSS as well
+            clearColor: [0, 0, 0, 0] //RGB 0-1+ opacity
+            },
+            controller: true, //activate the mouse control
+
+            layers: [
+
+                // new deck.GeoJsonLayer({
+                //     id: 'border',
+                //     data: border,
+                //     // Styles
+                //     stroked: true,
+                //     filled: false,
+                //     lineWidthMinPixels: 0.15,
+                //     getLineColor: [0, 0, 0], //RGB 0 - 255
+                // }),
+
+
+                new deck.GeoJsonLayer({
+                    id: 'lsoa', //every layer needs to have a unique ID
+                    data: lsoa, //data can be passed as variable or added inline
+                    // Styles
+                    stroked: true,
+                    filled: true,
+                    lineWidthMinPixels: 0.15,
+                    opacity: 0.7,
+                    getLineColor: [0, 0, 0], //RGB 0 - 255
+                    getFillColor: [255,255,255],
+                }),
+
+                new deck.GeoJsonLayer({
+                    id: 'hotels', //every layer needs to have a unique ID
+                    data: hotels, //data can be passed as variable or added inline
+                    // Styles
+                    pointType: 'circle',
+                    stroked: true,
+                    filled: true,
+                    lineWidthMinPixels: 1,
+                    opacity: 0.7,
+                    getLineColor: [0, 0, 0], //RGB 0 - 255
+                    getFillColor: [79, 75, 69],
+                    getRadius: 30
+                }),
+            ]
+        });
+    </script>
+</body>
+</html>
