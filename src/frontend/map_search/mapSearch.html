@@ -113,12 +113,21 @@
         vertical-align: middle;
     }
 
+    #refreshButton {
+        font-family: 'Playfair Display', sans-serif;
+        font-size: 20px;
+        font-weight: bold;
+        color: #500778;
+        display: inline-block;
+        margin: 0 auto;
+    }
+
     #fetchButton {
         font-family: 'Playfair Display', sans-serif;
         font-size: 20px;
         font-weight: bold;
         color: #500778;
-        display: block;
+        display: inline-block;
         margin: 0 auto;
     }
     
@@ -152,7 +161,10 @@
 
           <br>
 
-          <button id="fetchButton">Search</button>
+          <div id="search-container">
+            <button id="refreshButton">Refresh Page</button>
+            <button id="fetchButton">Search</button>
+          </div>
 
           <br>
 
@@ -174,10 +186,14 @@
 
     <script type="text/JavaScript">
 
+        document.getElementById('refreshButton').addEventListener('click', function() {
+                location.reload();
+        });
+
         // Link the slider to the display number
         document.getElementById('slider').oninput = function() {
             document.getElementById('sliderValue').textContent = this.value;
-        }
+        };
 
         // Set parameter to check the click status
         let isLocationActive = false;
@@ -235,10 +251,17 @@
                     id: 'points',
                     data: apiData,
                     getPosition: (d) => [d.geo.x, d.geo.y], // Get the coords
-                    getRadius: 400,
-                    getFillColor: [0, 24, 82],
-                    pickable: true,
+
+                    // Styles
+                    pointType: 'circle',
+                    stroked: true,
+                    filled: true,
+                    lineWidthMinPixels: 1,
                     opacity: 0.5,
+                    getRadius: 140,
+                    getLineColor: [255, 255, 255], //RGB 0 - 255
+                    getFillColor: [99, 0, 133],
+
                     onHover: ({ object, x, y }) => {
                     // Show label when the mouse stops upon
                         if (object) {
@@ -247,7 +270,7 @@
                             label.remove();
                             }
 
-                            // 创建新的标签并添加到页面
+                            // Create new page element
                             label = document.createElement('div');
                             label.textContent = object.name;
                             label.style.position = 'absolute';
@@ -255,10 +278,9 @@
                             label.style.top = `${y}px`;
                             document.body.appendChild(label);
                         } else {
-                            // 如果没有悬停在对象上，移除之前的标签
                             if (label) {
                             label.remove();
-                            label = null; // 将变量重置为null
+                            label = null; // Reset Parameter
                             }
                         }
                     }
@@ -268,31 +290,34 @@
 
                 console.log("LSOA URL:", lsoaUrl);
 
-                // 调用第一个 API 并获取 LSOA_Num 的列表
+                // Request the LSOA API
                 const lsoaData = await fetchData(lsoaUrl);
                 const lsoaNums = lsoaData.map(item => item.LSOA_Num);
 
-                // 创建一个数组来存储每个 LSOA_Num 的犯罪数据总和
+                // Set up an array for lsoa crime data storage
                 let lsoaCrimeData = [];
 
-                console.log(lsoaNums);
+                // console.log(lsoaNums);
 
+                // Crime Data Processing
                 for (const num of lsoaNums) {
                     const crimeUrl = `http://casa0017.cetools.org:8875/crime/${num}`;
                     const crimeData = await fetchData(crimeUrl);
                     
-                    // 计算每个 LSOA_Num 的犯罪数据总和
+                    // Sum up the data of different crime category
                     let crimeSum = crimeData.reduce((sum, crime) => sum + crime.TotalCrimeCount, 0);
 
-                    // 将 LSOA_Num 和它的犯罪总数添加到数组中
+                    // Update the array for crime data
                     lsoaCrimeData.push({ LSOA_Num: num, crimeSum: crimeSum });
                 }
 
-                console.log(lsoaCrimeData);
+                // console.log(lsoaCrimeData);
 
+                // Construct New Element For ScatterPlot
                 const ctx = document.getElementById('scatterPlot').getContext('2d');
+                // Initialize ScatterChart Object
                 const scatterChart = new Chart(ctx, {
-                    type: 'scatter',
+                    type: 'bubble',
                     data: {
                         datasets: [{
                             label: 'Crime Data',
@@ -300,7 +325,7 @@
                                 return {
                                     x: item.LSOA_Num,
                                     y: item.crimeSum,
-                                    r: (item.crimeSum / 10) * 10 // 调整点的大小
+                                    r: Math.sqrt(item.crimeSum) / 5 // fit the bubble size and reduce the difference
                                 };
                             }),
                             backgroundColor: '#500778'
@@ -312,15 +337,32 @@
                                     type: 'category',
                                     title: {
                                         display: true,
-                                        text: 'LSOA Number'
+                                        text: 'LSOA Number',
+                                        font: {
+                                            size: 8
+                                        }
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 8
+                                        }
                                     }
                                 },
                                 y: {
                                     beginAtZero: true,
                                     title: {
                                         display: true,
-                                        text: 'Crime Count'
-                                    }
+                                        text: 'Crime Count',
+                                        font: {
+                                            size: 8
+                                        }
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 8
+                                        }
+                                    }                                    
+
                                 }
                             },
                             plugins: {
@@ -343,11 +385,11 @@
                     getFillColor: [69,39,104,215],
                 });
 
-                const lsoa = './src/london_lsoa.geojson';
+                const lsoa1 = './src/london_lsoa.geojson';
 
                 const lsoaLayer = new deck.GeoJsonLayer({
-                    id: 'lsoa', //every layer needs to have a unique ID
-                    data: lsoa, //data can be passed as variable or added inline
+                    id: 'lsoa1', //every layer needs to have a unique ID
+                    data: lsoa1, //data can be passed as variable or added inline
                     // Styles
                     stroked: true,
                     filled: true,
@@ -366,7 +408,7 @@
 
                         if (crimeData) {
                             // 根据犯罪数量调整颜色
-                            const intensity = Math.min(1, crimeData.crimeSum / 100); // 假设100为最高犯罪数
+                            const intensity = Math.min(1, crimeData.crimeSum / 10000); // 假设100为最高犯罪数
                             return [0, 0, 255 * (1 - intensity), 255]; // 深蓝到浅蓝
                         } else {
                             // 如果没有出现在犯罪数据中，使用默认颜色
@@ -386,29 +428,26 @@
                     },
                 });
 
-                const hotelLayer = new deck.GeoJsonLayer({
-                    id: 'hotels', //every layer needs to have a unique ID
-                    data: hotels, //data can be passed as variable or added inline
-                    pickable: true,
-                    // Styles
-                    pointType: 'circle',
-                    stroked: true,
-                    filled: true,
-                    lineWidthMinPixels: 1,
-                    opacity: 0.95,
-                    getRadius: 150,
-                    getLineColor: [0, 0, 0], //RGB 0 - 255
-                    getFillColor: [79, 75, 69],
-                });
+                // const hotelLayer = new deck.GeoJsonLayer({
+                //     id: 'hotels', //every layer needs to have a unique ID
+                //     data: hotels, //data can be passed as variable or added inline
+                //     pickable: true,
+                //     // Styles
+                //     pointType: 'circle',
+                //     stroked: true,
+                //     filled: true,
+                //     lineWidthMinPixels: 1,
+                //     opacity: 0.95,
+                //     getRadius: 150,
+                //     getLineColor: [0, 0, 0], //RGB 0 - 255
+                //     getFillColor: [79, 75, 69],
+                // });
 
             // 将点图层添加到 DeckGL 地图中
-            deckgl.setProps({ layers: [outerLayer,lsoaLayer,pointLayer,hotelLayer] });
+            deckgl.setProps({ layers: [outerLayer,lsoaLayer,pointLayer] });
             }
-
             // 调用函数创建点图层并添加到地图中
             searchLayer(apiUrl);
-
-
         });
 
         const hotels = './src/london_hotel.geojson';
@@ -416,18 +455,8 @@
         const lsoa = './src/london_lsoa.geojson';
 
         const outer = './src/outer_update.geojson';
-        
-        // const viewport = new WebMercatorViewport({
-        //     latitude: 51.51646544379633,
-        //     longitude: -0.10846510533549451,
-        //     zoom: 9,
-        //     pitch: 0,
-        //     bearing: 0
-        // });
 
-        const deckgl = new deck.DeckGL({
-            container: 'map', // the id of the div element
-            initialViewState: {
+        const initialViewState =  {
                 latitude: 51.51646544379633,
                 longitude: -0.10846510533549451,
                 zoom: 9,
@@ -435,8 +464,11 @@
                 maxZoom: 13,
                 bearing: 0,
                 pitch: 0
-            },
+        };        
 
+        const deckgl = new deck.DeckGL({
+            container: 'map', // the id of the div element
+            initialViewState: initialViewState,
             onViewStateChange: function ({ viewState }) {
                 // Constraint the lat and lon
                 viewState.longitude = Math.max(-0.2220, Math.min(0.0200, viewState.longitude));
