@@ -6,13 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>London Map Visualization</title>
 
-    <!-- Mapbox Library
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' /> -->
-    
     <!-- DeckGL Library -->
     <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
 
+    <!-- ChartJs Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Font -->
@@ -136,7 +133,7 @@
 <body>
     <div id="container">
         <div id="sidebar">
-          <a href="index.html">&larr; Homepage</a>
+          <a href="mapSearch.html">&larr; Homepage</a>
           <hr>
           <h1>Find the Safest Hotel</h1>
           <p>You can check the crime data around each hotel in London.</p>
@@ -176,49 +173,45 @@
       </div>
 
     <script type="text/JavaScript">
-        // Set the slider link to the number display
 
+        // Link the slider to the display number
         document.getElementById('slider').oninput = function() {
             document.getElementById('sliderValue').textContent = this.value;
         }
 
-        // Set the click event
-
+        // Set parameter to check the click status
         let isLocationActive = false;
-
+        // Make the GetLocation Button keep listening the click event
         document.getElementById('getLocation').addEventListener('click', () => {
             isLocationActive = true;
             document.getElementById('coordinateBox').textContent = 'Searching...';
         });
 
         // Set up the fetchButton to get data from api
-
         document.getElementById('fetchButton').addEventListener('click', function () {
             // Get the value of slider
             const radius = document.getElementById('slider').value;
-
             // Get the text from coords box
             const coordinateBoxText = document.getElementById('coordinateBox').textContent;
-
             // Get the Numbers in coords text
             const matches = coordinateBoxText.match(/-?\d+\.\d+/g);
-
             // Set the lon and lat
             const lon = matches[0];
             const lat = matches[1];
 
-            //
-            console.log("Latitude:", lat);
-            console.log("Longitude:", lon);
+            // console.log("Latitude:", lat);
+            // console.log("Longitude:", lon);
 
+
+            // Set Url Link
             const apiUrl = `http://casa0017.cetools.org:8857/api/hotels/${lon}/${lat}/${radius}`;
 
             console.log(apiUrl);
 
-            // 定义一个异步函数来获取 API 数据
+            // Define asynchronous function for api fetching
             async function fetchData(apiUrl) {
                 try {
-                    const encodedUrl = encodeURI(apiUrl); // 确保 URL 被正确编码
+                    const encodedUrl = encodeURI(apiUrl); // enCode the Url
                     // console.log('Encoded URL:', encodedUrl);
                     const response = await fetch(apiUrl);
                     if (!response.ok) {
@@ -232,23 +225,24 @@
                 }
             }
 
-            let label = null;
-            // 定义一个异步函数来创建点图层并添加到 DeckGL 地图中
-            async function createPointLayer(apiUrl) {
+            let label = null; // Initialize the parameter for updating the label
+
+            // Define asynchronous function for searching with APIs
+            async function searchLayer(apiUrl) {
                 const apiData = await fetchData(apiUrl);
 
                 const pointLayer = new deck.ScatterplotLayer({
                     id: 'points',
                     data: apiData,
-                    getPosition: (d) => [d.geo.x, d.geo.y], // 获取点的经纬度坐标
-                    getRadius: 400, // 点的半径
-                    getFillColor: [0, 24, 82], // 点的颜色
-                    pickable: true, // 可交互
+                    getPosition: (d) => [d.geo.x, d.geo.y], // Get the coords
+                    getRadius: 400,
+                    getFillColor: [0, 24, 82],
+                    pickable: true,
                     opacity: 0.5,
                     onHover: ({ object, x, y }) => {
-                    // 鼠标悬停时显示标签
+                    // Show label when the mouse stops upon
                         if (object) {
-                            // 如果之前已经有标签，先移除它
+                            // if there is a label, delete the former one
                             if (label) {
                             label.remove();
                             }
@@ -269,23 +263,6 @@
                         }
                     }
                 });
-
-                // // Get the value of slider
-                // const radius = document.getElementById('slider').value;
-
-                // // Get the text from coords box
-                // const coordinateBoxText = document.getElementById('coordinateBox').textContent;
-
-                // // Get the Numbers in coords text
-                // const matches = coordinateBoxText.match(/-?\d+\.\d+/g);
-
-                // // Set the lon and lat
-                // const lon = matches[0];
-                // const lat = matches[1];
-
-                // //
-                // console.log("Latitude:", lat);
-                // console.log("Longitude:", lon);
 
                 const lsoaUrl = `http://casa0017.cetools.org:8875/lsoa/${lon}/${lat}/${radius}`;
 
@@ -429,7 +406,7 @@
             }
 
             // 调用函数创建点图层并添加到地图中
-            createPointLayer(apiUrl);
+            searchLayer(apiUrl);
 
 
         });
