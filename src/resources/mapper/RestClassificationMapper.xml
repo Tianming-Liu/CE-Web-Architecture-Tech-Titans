@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.czandlh.mapper.RestClassificationMapper">
+    <insert id="insert" parameterType="com.czandlh.entity.RestClassification">
+        insert into crime_classification
+            (uid, `name`, deleted, createDate, updateDate, operator)
+        values (#{uid}, #{name}, #{deleted}, now(), now(), #{operator})
+    </insert>
+
+    <update id="update" parameterType="com.czandlh.entity.RestClassification">
+        update crime_classification
+        set `name`     = #{name},
+            deleted    = #{deleted},
+            updateDate = now(),
+            operator   = #{operator}
+        where uid = #{uid}
+    </update>
+
+    <select id="findByDeleted" resultType="com.czandlh.entity.RestClassification">
+        select id,
+               uid,
+               `name`,
+               deleted,
+               createDate,
+               updateDate,
+               operator
+        from crime_classification
+        where deleted = 0
+    </select>
+
+    <select id="findTop1ByUidAndDeleted" resultType="com.czandlh.entity.RestClassification">
+        select id,
+               uid,
+               `name`,
+               deleted,
+               createDate,
+               updateDate,
+               operator
+        from crime_classification
+        where deleted = 0
+          and uid = #{uid}
+    </select>
+
+</mapper>
