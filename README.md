@@ -2,7 +2,7 @@
 
 ## StoryBoard
 <center>
-  <img src="./docs/storyBoard.jpg" alt="StoryBoard" width="400">
+  <img src="./docs/storyBoard.jpg" alt="StoryBoard" width="750">
 </center>
 
 ## Folder Structure
