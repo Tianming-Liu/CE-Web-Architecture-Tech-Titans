@@ -1,5 +1,10 @@
 # CE-Web-Architecture-Tech-Titans
 
+## StoryBoard
+<center>
+  <img src="./docs/storyBoard.jpg" alt="StoryBoard" width="400">
+</center>
+
 ## Folder Structure
 
 ```none
@@ -22,9 +27,6 @@ CE-Web-Architecture-Tech-Titans
 │   ├── crime data processing.ipynb (Code for data processing)
 ├── .gitignore (ignore the config file in the repository)
 ├── README.md (Brief intro of the web project)
-
-<center>
-  <img src="./docs/storyBoard.jpg" alt="StoryBoard" width="400">
-</center>
+```
 
 
