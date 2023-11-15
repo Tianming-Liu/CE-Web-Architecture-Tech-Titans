@@ -23,4 +23,6 @@ CE-Web-Architecture-Tech-Titans
 ├── .gitignore (ignore the config file in the repository)
 ├── README.md (Brief intro of the web project)
 
-![image](https://github.com/Tianming-Liu/CE-Web-Architecture-Tech-Titans/assets/146243657/3f1b55ce-1ec9-418b-a359-aa62dd1ddf06)
+![111111111111111111111](https://github.com/Tianming-Liu/CE-Web-Architecture-Tech-Titans/assets/146243657/e2415077-fc93-4f8f-a193-9cf837f38b44)
+
+
