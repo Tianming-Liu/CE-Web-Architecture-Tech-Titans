@@ -1,0 +1,63 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czandlh.mapper.RestRegionMapper">
+
+    <insert id="insert" parameterType="com.czandlh.entity.RestRegion">
+        insert into crime_region
+        (uid, `code`, `street`, `name`, `longitude`, `latitude`, `value`, deleted, createDate, updateDate, operator)
+        values (#{uid}, #{code}, #{street}, #{name}, #{longitude}, #{latitude}, #{value}, #{deleted}, now(), now(),
+                #{operator})
+    </insert>
+
+    <update id="update" parameterType="com.czandlh.entity.RestRegion">
+        update crime_region
+        set `name`      = #{name},
+            `code`      = #{code},
+            `street`    = #{street},
+            `longitude` = #{longitude},
+            `latitude`  = #{latitude},
+            `value`     = #{value},
+            deleted     = #{deleted},
+            updateDate  = now(),
+            operator    = #{operator}
+        where uid = #{uid}
+    </update>
+
+    <select id="findByDeleted" resultType="com.czandlh.entity.RestRegion">
+        select id,
+               uid,
+               `code`,
+               `street`,
+               `name`,
+               `longitude`,
+               `latitude`,
+               `value`,
+               deleted,
+               createDate,
+               updateDate,
+               operator
+        from crime_region
+        where deleted = 0
+        order by createDate desc
+    </select>
+
+    <select id="findTop1ByUidAndDeleted" resultType="com.czandlh.entity.RestRegion">
+        select id,
+               uid,
+               `code`,
+               `street`,
+               `name`,
+               `longitude`,
+               `latitude`,
+               `value`,
+               deleted,
+               createDate,
+               updateDate,
+               operator
+        from crime_region
+        where deleted = 0
+          and code = #{code}
+    </select>
+</mapper>
